@@ -1,0 +1,7 @@
+name: Filizer
+version: '0.1'
+main: fr.gregderiz.filizer.FilizerPlugin
+api-version: '1.21'
+load: STARTUP
+authors: [ GregDeRiz ]
+description: A plugin that manage files and configurations on the server
