@@ -1,11 +1,9 @@
-package fr.gregderiz.filizer;
+package fr.gregderiz.filizer.controllers;
 
 import com.google.common.collect.Sets;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
+import fr.gregderiz.filizer.managers.FileManager;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,9 +17,12 @@ public final class FolderController {
     }
 
     public void loopFolder(File folder) {
-        for (File file : getFolderListFiles(folder)) {
-            if (Files.isDirectory(file.toPath())) {
-                loopFolder(folder);
+        File[] fileList = folder.listFiles();
+        if (fileList == null) return;
+
+        for (File file : fileList) {
+            if (file.isDirectory()) {
+                loopFolder(file);
                 continue;
             }
 
@@ -30,15 +31,14 @@ public final class FolderController {
     }
 
     public Set<File> getFolderListFiles(File folder) {
-        if (folder.listFiles() == null) {
-            Bukkit.getConsoleSender().sendMessage(MiniMessage.miniMessage()
-                    .deserialize("The file is not a directory."));
-            return Sets.newHashSet();
-        }
-        return Sets.newHashSet(folder);
+        File[] fileList = folder.listFiles();
+        return (fileList == null) ? Sets.newHashSet() : Sets.newHashSet(fileList);
     }
 
     public Optional<File> findFolderByName(String folderName) {
-        return this.files.stream().filter(file -> file.getParentFile().getName().equalsIgnoreCase(folderName)).findFirst();
+        return this.files.stream()
+                .map(File::getParentFile)
+                .filter(parentFile -> parentFile.getName().equalsIgnoreCase(folderName))
+                .findFirst();
     }
 }
